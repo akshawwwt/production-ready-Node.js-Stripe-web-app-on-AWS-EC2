@@ -1,9 +1,6 @@
 /*
 
 🚀 Deploying a Node.js + Stripe Application on AWS EC2 (Production Setup using VS Code Remote SSH)
-
-✅ Project Type: Paid Workshop Assignment
-👨‍🏫 Instructor: [Your Professor's Name]
 📌 Task: Deploy a production-ready Node.js + Stripe web app on AWS EC2
 
 ---
