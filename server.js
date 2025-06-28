@@ -7,56 +7,50 @@ const port = process.env.PORT || 3000;
 require("dotenv").config();
 
 const api_key = process.env.SECRET_KEY;
-
 const stripe = require("stripe")(api_key);
 
 // ------------ Imports & necessary things here ------------
 
+// Static directory fallback:
+const staticDir = process.env.STATIC_DIR || "client";
+
 // Setting up the static folder:
-// app.use(express.static(resolve(__dirname, "./client")));
-app.use(express.static(resolve(__dirname, process.env.STATIC_DIR)));
+app.use(express.static(resolve(__dirname, staticDir)));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
-  const path = resolve(process.env.STATIC_DIR + "/index.html");
-  res.sendFile(path);
+  res.sendFile(resolve(__dirname, staticDir, "index.html"));
 });
 
 // creating a route for success page:
 app.get("/success", (req, res) => {
-  const path = resolve(process.env.STATIC_DIR + "/success.html");
-  res.sendFile(path);
+  res.sendFile(resolve(__dirname, staticDir, "success.html"));
 });
 
 // creating a route for cancel page:
 app.get("/cancel", (req, res) => {
-  const path = resolve(process.env.STATIC_DIR + "/cancel.html");
-  res.sendFile(path);
+  res.sendFile(resolve(__dirname, staticDir, "cancel.html"));
 });
 
 // Workshop page routes:
 app.get("/workshop1", (req, res) => {
-  const path = resolve(process.env.STATIC_DIR + "/workshops/workshop1.html");
-  res.sendFile(path);
+  res.sendFile(resolve(__dirname, staticDir, "workshops", "workshop1.html"));
 });
 app.get("/workshop2", (req, res) => {
-  const path = resolve(process.env.STATIC_DIR + "/workshops/workshop2.html");
-  res.sendFile(path);
+  res.sendFile(resolve(__dirname, staticDir, "workshops", "workshop2.html"));
 });
 app.get("/workshop3", (req, res) => {
-  const path = resolve(process.env.STATIC_DIR + "/workshops/workshop3.html");
-  res.sendFile(path);
+  res.sendFile(resolve(__dirname, staticDir, "workshops", "workshop3.html"));
 });
 
 // ____________________________________________________________________________________
 
 const domainURL = process.env.DOMAIN;
 app.post("/create-checkout-session/:pid", async (req, res) => {
-  
   const priceId = req.params.pid;
-  
+
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     success_url: `${domainURL}/success?id={CHECKOUT_SESSION_ID}`,
@@ -68,16 +62,14 @@ app.post("/create-checkout-session/:pid", async (req, res) => {
         quantity: 1,
       },
     ],
-    // allowing the use of promo-codes:
     allow_promotion_codes: true,
   });
-  res.json({
-    id: session.id,
-  });
+
+  res.json({ id: session.id });
 });
 
 // Server listening:
 app.listen(port, () => {
   console.log(`Server listening on port: ${port}`);
-  console.log(`You may access you app at: ${domainURL}`);
+  console.log(`You may access your app at: ${domainURL}`);
 });
